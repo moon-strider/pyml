@@ -1,10 +1,11 @@
-import layer
+import core.layers as layers
+import core.activations as activations
 
 import numpy as np
 
 
-linear = layer.linear_layer(3, 2, 0.002)
-sigm = layer.sigmoid()
+linear = layers.Linear(3, 2, 0.002)
+sigm = activations.Sigmoid()
 print(f"w: {linear.w}")
 print(f"b: {linear.b}")
 
