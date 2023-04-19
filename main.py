@@ -8,7 +8,7 @@ sigm = layer.sigmoid()
 print(f"w: {linear.w}")
 print(f"b: {linear.b}")
 
-x = np.random.randn(3, 2)
+x = np.random.randn(3)
 
 print(f"x: {x}")
 print(f"linear forward: {linear.forward(x)}")
