@@ -1,5 +1,8 @@
 import numpy as np
 
+from core.utils import ensure_2d
+from core.utils import Module
+
 
 class Linear(Module):
     def __init__(self, in_dim: int, out_dim: int, lr: np.float32):
