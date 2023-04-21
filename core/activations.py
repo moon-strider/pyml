@@ -6,7 +6,7 @@ from core.utils import Module
 
 class Sigmoid(Module):
     def __init__(self):
-        pass
+        super().__init__()
 
     @staticmethod
     def formula(x):
@@ -23,6 +23,7 @@ class Sigmoid(Module):
 
 class ReLU(Module):
     def __init__(self):
+        super().__init__()
         self.x = None
 
     def forward(self, x):
@@ -38,6 +39,7 @@ class ReLU(Module):
 
 class Tanh(Module):
     def __init__(self):
+        super().__init__()
         self.y = None
 
     def forward(self, x):
