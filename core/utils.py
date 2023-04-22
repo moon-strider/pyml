@@ -6,7 +6,7 @@ class Module():
         pass
 
 
-def ensure_2d(x: np.array):
+def ensure_2d(x: np.ndarray):
     if x.ndim == 1:
         np.reshape(x, (1, -1))
         return x
