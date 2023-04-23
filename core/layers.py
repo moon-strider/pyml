@@ -3,7 +3,8 @@ import numpy as np
 from core.utils import ensure_2d
 from core.utils import Module
 
-from numpy.lib.stride_tricks import as_strided
+from imgproc.utils import get_center_2d, get_center_1d, \
+                        get_pixel
 
 
 class Linear(Module):
@@ -41,11 +42,27 @@ class AvgPooling2D(Module):
     
 
 class MaxPooling2D(Module):
-    def __init__(self, filter_shape: tuple):
+    def __init__(self, filter_shape: tuple, stride=0):
         super().__init__()
+        self.filter_shape = filter_shape
+        if stride == 0:
+            self.stride = filter.shape[0]
+        else:
+            self.stride = stride
+        self.getmax = lambda x: np.max(x)
 
-    def forward(self, x):
-        pass
+    def forward(self, x): # TODO: add stride
+        x = ensure_2d(x)
+        rows, cols = x.shape
+        filter_rows, filter_cols = self.filter_shape
+        y = np.zeros((rows // self.stride))
+        filter_center = get_center_2d(np.zeros(self.filter_shape))
+        for i in range(x.size):
+            row = i // cols
+            col = i % cols
+            #pool_vec = [np.max([get_pixel()])]
+
+            
 
     def backward(self, grad):
         pass
@@ -59,8 +76,17 @@ class Convolutional2D(Module):
             stride = filter_shape[0]
 
     def forward(self, x):
-        if x.ndim != 2:
-            raise ValueError("An input to a 2D convolution must be a 2D array.")
-
+        x = ensure_2d(x)
+        rows, cols = x.shape
+        filter_rows, filter_cols = self.filter_shape
+        y = np.zeros((rows // self.stride))
+        center = get_center_2d(np.zeros(self.filter_shape))
+        for i in range(x.size):
+            row = i // cols
+            col = i % cols
+            for j in range(filter_rows * filter_cols):
+                filter_row = j // filter_cols
+                filter_col = j % filter_cols
+        
     def backward(self, grad):
         pass

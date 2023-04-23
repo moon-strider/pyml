@@ -1,5 +1,7 @@
 import numpy as np
 
+from core.utils import ensure_1d
+
 from PIL import Image
 
 
@@ -22,25 +24,32 @@ def get_pixel(img: Image, x: int, y: int, c=-1) -> float:
         if c!=-1 else ValueError("The image must be greyscale if you do not provide a channel.")
     
 
-def get_center_2d(mat: np.ndarray) -> np.ndarray:
-    if mat.ndim != 2:
-        raise ValueError("You must provide a 2D matrix in this function.")
-    r, c = mat.shape
-    rc, cc = r // 2, c // 2
-    if r % 2 == 0 and c % 2 == 0:
-        return np.array([(rc - 1, cc - 1), (rc - 1, cc), (rc, cc - 1), (rc, cc)])
-    elif r % 2 == 0:
-        return np.array([(rc - 1, cc), (rc, cc)])
-    elif c % 2 == 0:
-        return np.array([(rc, cc - 1), (rc, cc)])
+def get_center_2d(shape: tuple[int, int]) -> tuple[int, int]:
+    """
+    Get the central index of a 2d matrix. 
+    If it does not have a single central point, returns the top-left one.
+    
+    :param tuple[int, int] shape: a row-major shape of a matrix
+    """
+    if len(shape) != 2:
+        raise ValueError("You must provide a (w, h) tuple to use this function.")
+    rows, cols = shape
+    rows_center, cols_center = rows // 2, cols // 2
+    if rows % 2 == 0 and cols % 2 == 0:
+        return (rows_center - 1, cols_center - 1)
+    elif rows % 2 == 0:
+        return (rows_center - 1, cols_center)
+    elif cols % 2 == 0:
+        return (rows_center, cols_center - 1)
     else:
-        return np.array([(rc, cc)])
+        return (rows_center, cols_center)
     
 
-def get_center_1d(vec: np.ndarray) -> np.ndarray:
+def get_center_1d(vec: np.ndarray) -> int: # TODO: accept n, not the vector itself?
+    # if a vector does not have one central point, returns left-most one
     if vec.ndim != 1:
         raise ValueError("You must provide a 1D vector in this function.")
     n = vec.size
     if n % 2 == 0:
-        return np.array([n // 2 - 1, n // 2])
-    return np.array([n // 2])
+        return n // 2 - 1
+    return n // 2

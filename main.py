@@ -24,3 +24,6 @@ x = np.random.randn(3)
 print(f"x: {x}")
 print(f"linear forward: {linear.forward(x)}")
 print(f"sigmoid forward: {sigm.forward(x)}")
+
+for i in np.random.randn(3, 4):
+    print(i)
