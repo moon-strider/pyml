@@ -1,6 +1,6 @@
 import numpy as np
 
-from core.utils import ensure_2d
+from core.utils import ensure_2d, ensure_1d
 from core.utils import Module
 
 from imgproc.utils import get_center_2d, get_center_1d, \
@@ -50,6 +50,27 @@ class Linear(Module):
         self.w -= w_grad * self.lr
         self.b -= b_grad * self.lr
         return in_grad
+    
+
+class AvgPooling1D(Module):
+    def __init__(self, filter_size: int, stride='same') -> None:
+        super().__init__()
+        self.filter_size = filter_size
+        self.stride = stride
+        self.filter_center = get_center_1d(filter_size)
+
+    def forward(self, x: np.ndarray) -> np.ndarray:
+        x = ensure_1d()
+        pooled = np.array()
+        if isinstance(self.stride, int):
+            for i in range(x.size):
+                pooled.append(np.array())
+                for j in range(self.filter_size):
+                    pooled[i].append(x[i-self.filter_center+j])
+        return np.array([np.mean(pooled[i]) for i in range(x.size)])
+
+    def backward(self, grad: np.ndarray) -> np.ndarray:
+        return grad
     
 
 # class AvgPooling2D(Module):

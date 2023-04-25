@@ -8,12 +8,12 @@ class Sigmoid(Module):
     """
     A sigmoid activation Neural Network layer.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """Constructor."""
         super().__init__()
 
     @staticmethod
-    def formula(x: np.ndarray):
+    def formula(x: np.ndarray) -> np.ndarray:
         """
         A sigmoid function formula.
 
@@ -23,7 +23,7 @@ class Sigmoid(Module):
         """
         return 1 / (1 + np.exp(-x))
 
-    def forward(self, x):
+    def forward(self, x) -> np.ndarray:
         """
         Performs a forward pass for the layer (A sigmoid activation function).
 
@@ -35,7 +35,7 @@ class Sigmoid(Module):
         x = ensure_2d(x)
         return self.formula(x)
 
-    def backward(self, x):
+    def backward(self, x) -> np.ndarray:
         """
         Calculate a gradient for back propagation.
 
@@ -50,12 +50,12 @@ class ReLU(Module):
     """
     A Rectified Linear Unit activation Neural Network layer.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """Constructor."""
         super().__init__()
         self.x = None
 
-    def forward(self, x):
+    def forward(self, x) -> np.ndarray:
         """
         Performs a forward pass for the layer (A ReLU activation function).
 
@@ -67,7 +67,7 @@ class ReLU(Module):
         x = ensure_2d(x)
         return np.maximum(0, x)
 
-    def backward(self, grad_output):
+    def backward(self, grad_output) -> np.ndarray:
         """
         Calculate a gradient for back propagation.
 
@@ -84,12 +84,12 @@ class Tanh(Module):
     """
     A hyperbolic tangent actication Neural Network layer.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """Constructor."""
         super().__init__()
         self.y = None
 
-    def forward(self, x):
+    def forward(self, x) -> np.ndarray:
         """
         Performs a forward pass for the layer (A tanh activation function).
 
@@ -101,7 +101,7 @@ class Tanh(Module):
         self.y = np.tanh(x)
         return self.y
 
-    def backward(self, grad):
+    def backward(self, grad) -> np.ndarray:
         """
         Calculate a gradient for back propagation.
 
