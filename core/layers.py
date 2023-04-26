@@ -67,9 +67,11 @@ class AvgPooling1D(Module):
                 pooled.append(np.array())
                 for j in range(self.filter_size):
                     pooled[i].append(x[i-self.filter_center+j])
-        return np.array([np.mean(pooled[i]) for i in range(x.size)])
+        self.cache = np.array([np.mean(pooled[i]) for i in range(x.size)])
+        return self.cache
 
     def backward(self, grad: np.ndarray) -> np.ndarray:
+        grad = np.divide(self.filter_size, np.power(self.cache, -2))
         return grad
     
 
