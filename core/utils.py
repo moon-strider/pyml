@@ -6,6 +6,10 @@ class Module():
         pass
 
 
+def is_symmetrical_1d(vector_length: int) -> bool:
+    return vector_length % 2
+
+
 def ensure_1d(x: np.ndarray) -> np.ndarray:
     """
     Ensure that the input np.ndarray is a vector.

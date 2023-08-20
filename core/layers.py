@@ -1,10 +1,9 @@
 import numpy as np
 
-from core.utils import ensure_2d, ensure_1d
+from core.utils import ensure_2d, ensure_1d, is_symmetrical_1d
 from core.utils import Module
 
-from imgproc.utils import get_center_2d, get_center_1d, \
-                        get_pixel
+from imgproc.utils import get_center_2d, get_center_1d, get_pixel
 
 
 class Linear(Module):
@@ -15,6 +14,7 @@ class Linear(Module):
     :param int out_dim: number of features in the output
     :param np.float32 lr: learning rate
     """
+
     def __init__(self, in_dim: int, out_dim: int, lr: np.float32) -> None:
         """Constructor."""
         super().__init__()
@@ -34,6 +34,7 @@ class Linear(Module):
         """
         self.x = x
         x = ensure_2d(x)
+
         return np.dot(self.w, x) + self.b
 
     def backward(self, grad: np.ndarray) -> np.ndarray:
@@ -49,89 +50,51 @@ class Linear(Module):
         b_grad = np.sum(grad, axis=1, keepdims=True)
         self.w -= w_grad * self.lr
         self.b -= b_grad * self.lr
+
         return in_grad
-    
+
 
 class AvgPooling1D(Module):
-    def __init__(self, filter_size: int, stride='same') -> None:
+    def __init__(self, kernel_size: int, stride=None, zero_padding=True) -> None:
         super().__init__()
-        self.filter_size = filter_size
-        self.stride = stride
-        self.filter_center = get_center_1d(filter_size)
+        self.kernel_size = kernel_size
+        self.stride = stride if stride else kernel_size
+        self.kernel_center = get_center_1d(kernel_size)
+        self.zero_padding = zero_padding
+        self.cached = np.array([])
 
     def forward(self, x: np.ndarray) -> np.ndarray:
-        x = ensure_1d()
-        pooled = np.array()
-        if isinstance(self.stride, int):
-            for i in range(x.size):
-                pooled.append(np.array())
-                for j in range(self.filter_size):
-                    pooled[i].append(x[i-self.filter_center+j])
-        self.cache = np.array([np.mean(pooled[i]) for i in range(x.size)])
-        return self.cache
+        x = ensure_1d(x)
+        kernel_symmetrical = is_symmetrical_1d(self.kernel_size)
+        pooled = np.array([])
+        start, end = 0, len(x) - 1
+        
+        if self.zero_padding:
+            padding = ((self.kernel_size - 1) // 2, (self.kernel_size - 1) // 2 - (not kernel_symmetrical))
+            x = np.pad(x, padding, mode='constant')
+
+        start = self.kernel_size // 2 - (1 if not kernel_symmetrical else 0)
+        end = len(x) - self.kernel_size // 2 + 1
+
+        print(f"padded x: {x}")
+        print(f"for x starting at: {start}, ending with: {end}")
+
+        for i in range(start, end, self.stride):
+            print(f"stepping: {x[i - self.kernel_size // 2 : i + self.kernel_size // 2 + 1]}")
+            pooled = np.append(pooled, np.mean(np.sum(x[i - self.kernel_size // 2 : i + self.kernel_size // 2 + 1])))
+
+        self.cached = pooled
+
+        return self.cached
 
     def backward(self, grad: np.ndarray) -> np.ndarray:
-        grad = np.divide(self.filter_size, np.power(self.cache, -2))
+        grad = np.divide(self.kernel_size, np.power(self.cache, -2))
+
         return grad
-    
-
-# class AvgPooling2D(Module):
-#     def __init__(self, filter_shape: tuple):
-#         super().__init__()
-
-#     def forward(self, x):
-#         pass
-
-#     def backward(self, grad):
-#         pass
-    
-
-# class MaxPooling2D(Module):
-#     def __init__(self, filter_shape: tuple, stride=0):
-#         super().__init__()
-#         self.filter_shape = filter_shape
-#         if stride == 0:
-#             self.stride = filter.shape[0]
-#         else:
-#             self.stride = stride
-#         self.getmax = lambda x: np.max(x)
-
-#     def forward(self, x): # TODO: add stride
-#         x = ensure_2d(x)
-#         rows, cols = x.shape
-#         filter_rows, filter_cols = self.filter_shape
-#         y = np.zeros((rows // self.stride))
-#         filter_center = get_center_2d(np.zeros(self.filter_shape))
-#         for i in range(x.size):
-#             row = i // cols
-#             col = i % cols
-#             #pool_vec = [np.max([get_pixel()])]
-
-            
-
-#     def backward(self, grad):
-#         pass
 
 
-# class Convolutional2D(Module):
-#     def __init__(self, filter_shape: tuple, stride=0):
-#         super().__init__()
-#         self.filter = np.ones(filter_shape, np.float32)
-#         if not stride:
-#             stride = filter_shape[0]
-
-#     def forward(self, x):
-#         x = ensure_2d(x)
-#         rows, cols = x.shape
-#         filter_rows, filter_cols = self.filter_shape
-#         y = np.zeros((rows // self.stride))
-#         center = get_center_2d(np.zeros(self.filter_shape))
-#         for i in range(x.size):
-#             row = i // cols
-#             col = i % cols
-#             for j in range(filter_rows * filter_cols):
-#                 filter_row = j // filter_cols
-#                 filter_col = j % filter_cols
-        
-#     def backward(self, grad):
-#         pass
+# TODO: AvgPooling2D
+# TODO: MaxPooling1D
+# TODO: MaxPooling2D
+# TODO: Convolutional1D
+# TODO: Convolutional2D

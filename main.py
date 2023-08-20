@@ -3,27 +3,20 @@ import numpy as np
 import core.layers as layers
 import core.activations as activations
 
-from PIL import Image
+avg_pooling_1d = layers.AvgPooling1D(3)
+to_pool = np.array([1, 2, 3])
+to_pool_2 = np.array([1, 2, 3, 4])
+to_pool_3 = np.array([1, 2, 3, 4, 5])
+to_pool_4 = np.array([1, 2, 3, 4, 5, 6])
 
-from imgproc.utils import is_grey_scale
+res_pool = avg_pooling_1d.forward(to_pool)
+res_pool_2 = avg_pooling_1d.forward(to_pool_2)
+res_pool_3 = avg_pooling_1d.forward(to_pool_3)
+res_pool_4 = avg_pooling_1d.forward(to_pool_4)
 
+print(avg_pooling_1d.stride)
 
-img = Image.open("img.jpg")
-grey = Image.open("gray.jpeg")
-
-print(is_grey_scale(img))
-print(is_grey_scale(grey))
-
-linear = layers.Linear(3, 2, 0.002)
-sigm = activations.Sigmoid()
-print(f"w: {linear.w}")
-print(f"b: {linear.b}")
-
-x = np.random.randn(3)
-
-print(f"x: {x}")
-print(f"linear forward: {linear.forward(x)}")
-print(f"sigmoid forward: {sigm.forward(x)}")
-
-for i in np.random.randn(3, 4):
-    print(i)
+print(res_pool)
+print(res_pool_2)
+print(res_pool_3)
+print(res_pool_4)
