@@ -1,7 +1,7 @@
 import numpy as np
 
-from core.utils import ensure_2d, ensure_1d, is_symmetrical_1d
-from core.utils import Module
+from bases.utils import ensure_2d, ensure_1d, is_symmetrical_1d, calculate_padding_1d
+from bases.utils import Module
 
 from imgproc.utils import get_center_2d, get_center_1d, get_pixel
 
@@ -64,16 +64,18 @@ class AvgPooling1D(Module):
         self.cached = np.array([])
 
     def forward(self, x: np.ndarray) -> np.ndarray:
+        # TODO: check if len > kernel_size
         x = ensure_1d(x)
         kernel_symmetrical = is_symmetrical_1d(self.kernel_size)
         pooled = np.array([])
-        start, end = 0, len(x) - 1
-        
-        if self.zero_padding:
-            padding = ((self.kernel_size - 1) // 2, (self.kernel_size - 1) // 2 - (not kernel_symmetrical))
-            x = np.pad(x, padding, mode='constant')
+        req_padding = calculate_padding_1d(len(x), self.kernel_size, self.stride)
 
-        start = self.kernel_size // 2 - (1 if not kernel_symmetrical else 0)
+        print(f"x: {x}, required padding: {req_padding}")
+        
+        if self.zero_padding: # and req_padding?
+            x = np.pad(x, req_padding, mode='constant')
+
+        start = self.kernel_size // 2 - (not kernel_symmetrical)
         end = len(x) - self.kernel_size // 2 + 1
 
         print(f"padded x: {x}")
@@ -81,7 +83,7 @@ class AvgPooling1D(Module):
 
         for i in range(start, end, self.stride):
             print(f"stepping: {x[i - self.kernel_size // 2 : i + self.kernel_size // 2 + 1]}")
-            pooled = np.append(pooled, np.mean(np.sum(x[i - self.kernel_size // 2 : i + self.kernel_size // 2 + 1])))
+            pooled = np.append(pooled, np.mean(x[i - self.kernel_size // 2 : i + self.kernel_size // 2 + 1]))
 
         self.cached = pooled
 

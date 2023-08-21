@@ -6,6 +6,16 @@ class Module():
         pass
 
 
+def calculate_padding_1d(vector_length: int, kernel_size: int, stride: int) -> tuple[int, int]:
+    if kernel_size > vector_length:
+        raise ValueError("Cannot calculate padding for a vector that is smaller than kernel size.")
+
+    total_padding = (kernel_size + stride - vector_length % (kernel_size + stride)) % kernel_size
+    print(f"total_padding: {total_padding}")
+    left_padding = total_padding // 2
+    right_padding = total_padding - left_padding
+    return (left_padding, right_padding)
+
 def is_symmetrical_1d(vector_length: int) -> bool:
     return vector_length % 2
 

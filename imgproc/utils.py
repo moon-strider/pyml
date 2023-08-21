@@ -1,6 +1,6 @@
 import numpy as np
 
-from core.utils import ensure_1d
+from bases.utils import ensure_1d
 
 from PIL import Image
 

@@ -1,7 +1,7 @@
 import numpy as np
 
-from core.utils import ensure_2d
-from core.utils import Module
+from bases.utils import ensure_2d
+from bases.utils import Module
 
 
 class Sigmoid(Module):
