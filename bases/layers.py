@@ -64,7 +64,8 @@ class AvgPooling1D(Module):
         self.cached = np.array([])
 
     def forward(self, x: np.ndarray) -> np.ndarray:
-        # TODO: check if len > kernel_size
+        if len(x) < self.kernel_size:
+            raise ValueError(f"kernel {self.kernel_size}x1 is too big for input {len(x)}x1)")
         x = ensure_1d(x)
         kernel_symmetrical = is_symmetrical_1d(self.kernel_size)
         pooled = np.array([])
